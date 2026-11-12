@@ -1,0 +1,27 @@
+name: AWS OIDC Authentication
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  aws-authentication:
+    name: Authenticate with AWS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6.3.0
+        with:
+          role-to-assume: arn:aws:iam::224270744698:role/github-actions-oidc-lab-role
+          aws-region: us-east-1
+          role-session-name: GitHubActions-${{ github.run_id }}
+
+      - name: Verify AWS Identity
+        run: aws sts get-caller-identity
